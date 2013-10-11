@@ -9,13 +9,14 @@ def main():
 		print('Usage: randgen.py num filename')
 		sys.exit(1)
 
-	st = time.time()
-	print('Start time: ', st)
-
 	loopend = int(sys.argv[1])
 	low = 999999
 	high = 10000000
 	randlist = []
+	
+	st = time.time()
+	print('Start time: ', st)
+
 	i = 0
 	while i < loopend:
 		randlist.append(random.randrange(low, high))
@@ -30,7 +31,7 @@ def main():
 	i = 0
 	while i < len(randlist):
 		file.write(str(randlist[i]))
-		file.write(';\t')
+		file.write(';')
 		i = i + 1
 
 	file.close()
