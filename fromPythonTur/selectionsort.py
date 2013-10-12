@@ -22,6 +22,7 @@ def main():
 	line = fileopen.read()
 	L = line.split(';')
 	fileopen.close()
+	L.pop()
 
 	et1 = time.time()
 	print('End time1 (reading file, generating list): ', et1, end = ';\t')
@@ -40,7 +41,7 @@ def main():
 			swap(L, i, mark)
 		
 	et2 = time.time()
-	print('End time2 (bubble sorting): ', et2, end = ';\t')
+	print('End time2 (selection sorting): ', et2, end = ';\t')
 	print('Durtime: ', (et2 -et1))
 
 	fileopen = open(sys.argv[2], 'w')

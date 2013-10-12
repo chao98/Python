@@ -19,7 +19,9 @@ def main():
 
 	i = 0
 	while i < loopend:
-		randlist.append(random.randrange(low, high))
+		m = random.randrange(low, high)
+		if m != 0:
+			randlist.append(m)
 		i = i + 1
 
 	et1 = time.time()

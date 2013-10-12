@@ -10,6 +10,16 @@ def swap(L, i, j):
 	L[i] = temp
 
 def partition(L, low, high):
+#	mid = low + (high -  low) // 2
+#	if L[low] > L[high]:
+#		swap(L, low, high)
+#
+#	if L[mid] > L[high]:
+#		swap(L, mid, high)
+#
+#	if L[mid] > L[low]:
+#		swap(L, mid, low)
+
 	pivotkey = L[low]
 
 	while(low < high):
@@ -48,6 +58,7 @@ def main():
 	line = fileopen.read()
 	L = line.split(';')
 	fileopen.close()
+	L.pop()
 
 	et1 = time.time()
 	print('End time1 (reading file, generating list): ', et1, end = ';\t')
@@ -58,7 +69,7 @@ def main():
 	qsort(L, 0, length-1)
 
 	et2 = time.time()
-	print('End time2 (bubble sorting): ', et2, end = ';\t')
+	print('End time2 (quick sorting): ', et2, end = ';\t')
 	print('Durtime: ', (et2 -et1))
 
 	fileopen = open(sys.argv[2], 'w')
