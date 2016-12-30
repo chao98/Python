@@ -1,5 +1,5 @@
 from collections import namedtuple
-from collections import defaultdict
+from collections import OrderedDict
 
 
 def ndtuple(n):
@@ -14,9 +14,46 @@ def ndtuple(n):
         print(c)
 
 
+class LastUpdateOrderedDict(OrderedDict):
+    '''
+    >>> luoDict = LastUpdateOrderedDict(3)
+    >>> luoDict['1'] = 1
+    add: ('1', 1)
+    >>> luoDict['2'] = 2
+    add: ('2', 2)
+    >>> luoDict['3'] = 3
+    add: ('3', 3)
+    >>> luoDict['2'] = 2 * 2
+    set: ('2', 4)
+    >>> luoDict['4'] = 4
+    rm: ('1', 1)
+    add: ('4', 4)
+    >>> print(luoDict)
+    LastUpdateOrderedDict([('3', 3), ('2', 4), ('4', 4)])
+
+    '''
+    def __init__(self, capacity):
+        super(LastUpdateOrderedDict, self).__init__()
+        self._capacity = capacity
+
+    def __setitem__(self, key, value):
+        containsKey = 1 if key in self else 0
+        if len(self) - containsKey >= self._capacity:
+            last = self.popitem(last=False)
+            print('rm:', last)
+        if containsKey:
+            del self[key]
+            print('set:', (key, value))
+        else:
+            print('add:', (key, value))
+        OrderedDict.__setitem__(self, key, value)
+
+
 def main():
-    ndtuple(1)
+    ndtuple(0)
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    import doctest
+    doctest.testmod()
