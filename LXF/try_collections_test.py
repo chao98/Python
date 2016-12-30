@@ -15,7 +15,6 @@ class testLastUpdateOrderedDict(unittest.TestCase):
         d = LastUpdateOrderedDict(3)
         self.assertTrue(isinstance(d, dict))
         self.assertTrue(isinstance(d, OrderedDict))
-        #self.assertTrue(isinstance(d, dict))
 
     def test_setitem(self):
         d = LastUpdateOrderedDict(3)
