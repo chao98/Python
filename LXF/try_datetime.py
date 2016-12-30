@@ -72,9 +72,9 @@ def main(n):
     if n == 10:
         # 用utc时间转换成其它时区的时间
         utc_dt = datetime.utcnow()
-        print('utc: ', utc_dt)
+        print('orig utc: ', utc_dt)
         utc_dt = utc_dt.replace(tzinfo=timezone.utc)
-        print('utc: ', utc_dt)
+        print('force utc: ', utc_dt)
         bj_dt = utc_dt.astimezone(timezone(timedelta(hours=8)))
         print('bj time: ', bj_dt)
         jp_dt = utc_dt.astimezone(timezone(timedelta(hours=9)))
