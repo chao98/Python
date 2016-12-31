@@ -18,8 +18,21 @@ def urlget(n, url):
         with request.urlopen(url) as f:
             for k, v in f.getheaders():
                 print('%s: %s' % (k, v))
+            s = f.read().decode('GB2312')
+            print('\n\nData:\n', s)
 
-            print('\n\nData:\n', f.read().decode('GB2312'))
+            file_name = r'600518.htm'
+            with open(file_name, 'w') as ff:
+                ff.write(s)
+    if n == 3:
+        with request.urlopen(url) as f:
+            for k, v in f.getheaders():
+                print('%s: %s' % (k, v))
+            s = f.read()
+
+            file_name = r'StockAList.htm'
+            with open(file_name, 'wb') as ff:
+                ff.write(s)
 
 
 def pp_json(js, sort=True, indents=4):
@@ -32,9 +45,12 @@ def pp_json(js, sort=True, indents=4):
 
 def main():
     url1 = r'https://api.douban.com/v2/book/2129650'
-    url2 = r'http://stock.finance.qq.com/corp1/stk_holder_count.php?zqdm=600518'
     #urlget(1, url1)
+    url2 = r'http://stock.finance.qq.com/corp1/stk_holder_count.php?zqdm=600518'
     urlget(2, url2)
+    url3 = r'http://quote.eastmoney.com/stocklist.html'
+    urlget(3, url3)
+
 
 if __name__ == '__main__':
     main()
