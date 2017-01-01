@@ -47,9 +47,9 @@ def main():
     url1 = r'https://api.douban.com/v2/book/2129650'
     #urlget(1, url1)
     url2 = r'http://stock.finance.qq.com/corp1/stk_holder_count.php?zqdm=600518'
-    urlget(2, url2)
+    urlget(3, url2)
     url3 = r'http://quote.eastmoney.com/stocklist.html'
-    urlget(3, url3)
+    #urlget(3, url3)
 
 
 if __name__ == '__main__':
