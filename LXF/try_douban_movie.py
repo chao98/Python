@@ -38,9 +38,16 @@ def findmv(html):
     mv_info = []
 
     for mv in mv_list.find_all('li'):
-        mv_detail = mv.find('div', attrs={'class': 'hd'})
-        mv_name = mv_detail.find('span', attrs={'class': 'title'}).getText()
-        mv_info.append(mv_name)
+        mv_hd = mv.find('div', attrs={'class': 'hd'})
+        mv_name = mv_hd.find('span', attrs={'class': 'title'}).getText()
+        mv_bd = mv.find('div', attrs={'class': 'bd'})
+        mv_rating = mv_bd.find('span', attrs={'class': 'rating_num'}).getText()
+        mv_stars = mv_bd.find_all('span')
+        mv_rating_people = None
+        for mv_star in mv_stars:
+            if '评价' in mv_star.getText():
+                mv_rating_people = mv_star.getText()[:-3]
+        mv_info.append((mv_name, mv_rating, mv_rating_people))
 
     return mv_info
 
