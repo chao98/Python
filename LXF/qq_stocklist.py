@@ -8,10 +8,12 @@ def downhtml(url, params):
     timeout = 3
     r = requests.get(url, params=params, headers=headers, timeout=timeout)
     if r.status_code == requests.codes.ok:
-        #print('OK', url)
+        print('OK', r.url)
+        print('Encoding: ', r.encoding)
+        r.encoding = 'utf-8'
         return r.text
     else:
-        #print('NOK, exit')
+        print('NOK!')
         return
 
 
@@ -23,6 +25,8 @@ def parsehtml(html):
 
     stock_list = []
 
+    with open('mstats.html', 'w') as f:
+        f.write(html)
     return stock_list, True
 
 
@@ -44,9 +48,7 @@ def get_stock_list(url):
 
     if url is not None:
         stk_lst, next_page_exist = parsehtml(downhtml(url, params))
-        if len(stk_lst) != 0:
-            print('Page [%s] OK' % page)
-        pass
+        print('Page [%s] with [%d]' % (page, len(stk_lst)))
 
 
 def main():
