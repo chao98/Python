@@ -1,5 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
+from datetime import datetime
 import json
 import logging
 
@@ -68,26 +69,24 @@ def extract_stk_list(stk_list):
     failed = []
     owners = {}
     counter = 0
+    start = datetime.now()
 
     for stk in stk_list:
         url = base_url.format(stk)
 
         try:
             html = downhtml(url)
-        except requests.exceptions.RequestException:
-            print('d[{}]'.format(stk))
-            html = None
-
-        if html is None:
-            failed.append(stk)
-        if counter % 70 == 0:
-            print('\n[%4d]: ' % counter, end='')
-        print('.', end='', flush=True)
-        counter += 1
-        try:
+            if counter % 60 == 0:
+                delta = (datetime.now() - start).seconds
+                print('\n[%6.1f | %4d]: ' % (delta, counter), end='')
+            print('.', end='', flush=True)
             owners[stk] = parserhtml(html)
+            counter += 1
+        except requests.exceptions.RequestException:
+            print('d[{}]'.format(stk), end='')
+            failed.append(stk)
         except Exception as e:
-            print('p[{}]'.format(stk))
+            print('p[{}]'.format(stk), end='')
             # logging.exception(e)
 
     return owners, failed
