@@ -73,7 +73,6 @@ def extract_stk_list(stk_list):
 
     for stk in stk_list:
         url = base_url.format(stk)
-
         try:
             html = downhtml(url)
             if counter % 60 == 0:
@@ -99,7 +98,7 @@ def main():
     stk_list = get_stklst(ifile)
     owners = {}
     counter = 0
-    while stk_list != []:
+    while stk_list:
         owners_piece, stk_list = extract_stk_list(stk_list)
         owners.update(owners_piece)
         counter += 1
