@@ -44,15 +44,21 @@ def extract_update_15(stk, owners):
     return update_every_15
 
 
+def save_stk(ofile, update_15):
+    with open(ofile, 'w') as f:
+        json.dump(update_15, f, indent=2)
+
+
 def main():
     stklistfile = 'stk_list.txt'
     stkownerfile = 'jqowners.txt'
+    outfile = 'u15.txt'
 
-    stk = get_stklst(stklistfile, 10)
+    stk = get_stklst(stklistfile, 300)
     owners = get_owners(stkownerfile)
     update_15 = extract_update_15(stk, owners)
     print(len(update_15), update_15)
-
+    save_stk(outfile, update_15)
 
 if __name__ == '__main__':
     main()
