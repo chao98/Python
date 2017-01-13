@@ -1,3 +1,14 @@
+from datetime import datetime
+from collections import namedtuple
+
+config = {'SOURCE': None,
+          'Source sht': None,
+          'TARGET': None,
+          'Raw sht': None,
+          'Trend sht': None,
+          'Statistics sht': None,
+          'Log sht': None}
+
 
 trend_check_items = {'In': [0 for i in range(12)],
                      'Out': [0 for i in range(12)],
