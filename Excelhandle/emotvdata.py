@@ -30,15 +30,25 @@ def trend_analyse(sht, rawdata):
                     cr.trend_item['BMC'][month] += 1
 
                 if not rowdata.GS2LSD:
-                    cr.trend_item['Out'][month] += 1
-                else:
                     cr.trend_item['Open'][month] += 1
+                else:
+                    cr.trend_item['Out'][month] += 1
 
-    for k, v in cr.trend_item.items():
-        # print('\t', k, ' = ', v)
-        row = cr.trend_row[k]
-        for col in range(2, 14):
-            sht.range(row, col).value = v[col-2]
+    # for k, v in cr.trend_item.items():
+        # Solution-1, write one cell by one cell. Slow!!
+        # row = cr.trend_row[k]
+        # for col in range(2, 14):
+        #     sht.range(row, col).value = v[col-2]
+
+    # for k, v in cr.trend_item.items():
+        # Solution-2, write one line by one line. Faster!
+        # row = cr.trend_row[k]
+        # cr.write_row(sht, v, row=row, col=2)
+
+    # Solution-3, write whole area. Fastest!
+    # print(cr.trend_item)
+    datamatrix = [v for v in cr.trend_item.values()]
+    cr.write_sheet(sht, datamatrix, row=2, col=2)
 
 
 def main(from_file, to_file):
@@ -66,16 +76,18 @@ def main(from_file, to_file):
         cr.log(LOGSHEET, r'Successfully get WB/Sheets handlers.')
 
         cr.log(None, r'Start to copy raw data.')
-        cr.copy_sheet(FROMSHEET, RAWSHEET)
-        cr.log(None, r'Successfully copied raw data.')
+        num_copied_row = cr.copy_sheet(FROMSHEET, RAWSHEET)
+        cr.log(LOGSHEET, r'Successfully copied {} lines raw data.'.format(num_copied_row))
 
-        # cr.log(None, r'Start to input rawdata to memory.')
-        # raw_data = cr.build_data(RAWSHEET)
-        # cr.log(LOGSHEET, r'Input rawdata to memory done.')
-        #
-        # cr.log(None, r'Start to fill in trend sheet.')
-        # trend_analyse(TRENDSHEET, raw_data)
-        # cr.log(LOGSHEET, r'Filled in trend sheet.')
+        cr.log(None, r'Start to input rawdata to memory.')
+        raw_data = cr.build_data(RAWSHEET)
+        # print(raw_data[1])
+        # print(raw_data[-1])
+        cr.log(LOGSHEET, r'Input rawdata to memory done.')
+
+        cr.log(None, r'Start to fill in trend sheet.')
+        trend_analyse(TRENDSHEET, raw_data)
+        cr.log(LOGSHEET, r'Filled in trend sheet.')
 
     except cr.CSRErr as err:
         cr.log(LOGSHEET, err.args)
