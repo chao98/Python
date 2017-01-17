@@ -1,7 +1,8 @@
 import sys
-import os
+import pprint
 import ecsrreportconfig as cr
 from datetime import datetime
+from collections import OrderedDict
 
 
 def trend_analyse(sht, rawdata):
@@ -34,21 +35,47 @@ def trend_analyse(sht, rawdata):
                 else:
                     cr.trend_item['Out'][month] += 1
 
-    # for k, v in cr.trend_item.items():
-        # Solution-1, write one cell by one cell. Slow!!
-        # row = cr.trend_row[k]
-        # for col in range(2, 14):
-        #     sht.range(row, col).value = v[col-2]
-
-    # for k, v in cr.trend_item.items():
-        # Solution-2, write one line by one line. Faster!
-        # row = cr.trend_row[k]
-        # cr.write_row(sht, v, row=row, col=2)
-
-    # Solution-3, write whole area. Fastest!
-    # print(cr.trend_item)
     datamatrix = [v for v in cr.trend_item.values()]
     cr.write_sheet(sht, datamatrix, row=2, col=2)
+
+
+def stat_analyse(sht, rawdata):
+    sht.activate()
+    sht.clear()
+    YEAR = datetime.now().year
+    # YEAR = 2016
+    for rowdata in rawdata:
+        if rowdata.CreateD.year == YEAR:
+            if not cr.csr_stat[rowdata.Node][rowdata.Customer]:
+                cr.csr_stat[rowdata.Node][rowdata.Customer] = OrderedDict().fromkeys(cr.stat_report_template, 0)
+                cr.csr_stat[rowdata.Node][rowdata.Customer]['CSR'] = 1
+            else:
+                cr.csr_stat[rowdata.Node][rowdata.Customer]['CSR'] += 1
+
+            if rowdata.Queue != r'Not assigned':
+                cr.csr_stat[rowdata.Node][rowdata.Customer]['Tier2'] += 1
+
+                if rowdata.Type == 'Problem':
+                    cr.csr_stat[rowdata.Node][rowdata.Customer]['PROB'] += 1
+                if rowdata.TR != '#':
+                    cr.csr_stat[rowdata.Node][rowdata.Customer]['FAULT'] += 1
+                if rowdata.Severity == 'Emergency':
+                    cr.csr_stat[rowdata.Node][rowdata.Customer]['EMER'] += 1
+
+    # pp = pprint.PrettyPrinter(indent=2)
+    # pp.pprint(cr.csr_stat)
+    stat_table = list()
+    stat_table.append(['', '', *cr.stat_report_template])
+    for i in cr.csr_stat:
+        node = list()
+        node.append(i)
+        for j in cr.csr_stat[i]:
+            node = list()
+            node.extend([i, j])
+            node.extend(cr.csr_stat[i][j].values())
+            stat_table.append(node)
+    # pp.pprint(sorted(stat_table))
+    cr.write_sheet(sht, sorted(stat_table), row=1, col=1)
 
 
 def main(from_file, to_file):
@@ -89,12 +116,16 @@ def main(from_file, to_file):
         trend_analyse(TRENDSHEET, raw_data)
         cr.log(LOGSHEET, r'Filled in trend sheet.')
 
+        cr.log(None, r'Start to fill in stat sheet.')
+        stat_analyse(STATSHEET, raw_data)
+        cr.log(LOGSHEET, r'Filled in stat sheet.')
+
     except cr.CSRErr as err:
         cr.log(LOGSHEET, err.args)
 
 
 if __name__ == '__main__':
-    from_file = 'MOTV-2017WK02.xlsx'
+    from_file = 'MOTV-2017WK03.xlsx'
     to_file = 'Customer Perception - 201701.xlsm'
     main(from_file, to_file)
 

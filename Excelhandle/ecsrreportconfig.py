@@ -2,6 +2,8 @@ import xlwings as xw
 from datetime import datetime
 from collections import namedtuple
 from collections import OrderedDict
+from collections import defaultdict
+
 
 config = {'fromsheet': 'MOTV',
           'Raw': 'raw17',
@@ -197,5 +199,11 @@ def write_sheet(sht, datamatrix, row=2, col=1):
     start_row, end_row = row-1, row+row_num-1
     start_col, end_col = col-1, col+col_num-1
     sht[start_row:end_row, start_col:end_col].value = datamatrix
+
+
+# define a multi-level dict, with default value
+csr_stat_dict = lambda: defaultdict(csr_stat_dict)
+csr_stat = csr_stat_dict()
+stat_report_template = ['CSR', 'Tier2', 'PROB', 'FAULT', 'EMER']
 
 
