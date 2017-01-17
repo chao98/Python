@@ -65,15 +65,15 @@ def stat_analyse(sht, rawdata):
     # pp = pprint.PrettyPrinter(indent=2)
     # pp.pprint(cr.csr_stat)
     stat_table = list()
-    stat_table.append(['', '', *cr.stat_report_template])
-    for i in cr.csr_stat:
-        for j in cr.csr_stat[i]:
+    stat_table.append(['Release', 'Customer', *cr.stat_report_template])
+    for i in sorted(cr.csr_stat, key=str.lower):
+        for j in sorted(cr.csr_stat[i], key=str.lower):
             node = list()
             node.extend([i, j])
             node.extend(cr.csr_stat[i][j].values())
             stat_table.append(node)
     # pp.pprint(sorted(stat_table))
-    cr.write_sheet(sht, sorted(stat_table), row=1, col=1)
+    cr.write_sheet(sht, stat_table, row=1, col=1)
 
 
 def main(from_file, to_file):
