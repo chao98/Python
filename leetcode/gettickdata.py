@@ -26,6 +26,8 @@ def get_dates(start, end):
 
 def get_tick(code, start, end=None, file=None):
     date = get_dates(start, end)
+    if not file:
+        file = '-'.join([code, start.replace('-', ''), str(len(date))]) + r'.csv'
     for d in date:
         df = ts.get_tick_data(code, date=d)
         df.to_csv(file, mode='a')
@@ -56,7 +58,7 @@ def main(argv):
             print('python gettickdata -c code -s startdate -e enddate -o outfile')
             sys.exit()
 
-    # print(code, startdate, enddate, ofile)
+    print(code, startdate, enddate, ofile)
     get_tick(code, startdate, enddate, file=ofile)
 
 
