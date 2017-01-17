@@ -67,8 +67,6 @@ def stat_analyse(sht, rawdata):
     stat_table = list()
     stat_table.append(['', '', *cr.stat_report_template])
     for i in cr.csr_stat:
-        node = list()
-        node.append(i)
         for j in cr.csr_stat[i]:
             node = list()
             node.extend([i, j])
