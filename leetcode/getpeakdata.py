@@ -42,7 +42,7 @@ def get_single_peak_data(code, params):
     hidxd = hidx.strftime(DATEFMT)
     # print('\t{}: {} -> {}, {} -> {}'.format(code, lidxd, low, hidxd, high))
     if incr and lidx < hidx and (high - low) / low >= lratio:
-        print('\t{}: {} -> {}, {} -> {}'.format(code, lidxd, low, hidxd, high))
+        print('\n{}: {} -> {}, {} -> {}'.format(code, lidxd, low, hidxd, high), end='')
         return code, (lidxd, low), (hidxd, high)
     elif not incr and hidx < lidx and (high - low) / low >= lratio:
         return code, (hidxd, high), (lidxd, low)
@@ -50,15 +50,23 @@ def get_single_peak_data(code, params):
 
 def get_peak_data(stock_list, params):
     result = []
-    for code in stock_list:
+    width = 50
+    begin = datetime.now()
+    for i, code in enumerate(stock_list):
+        if i % width == 0:
+            delta = (datetime.now() - begin).seconds
+            print('\n[%6.1f | %4d]: .' % (delta, i), end='', flush=True)
+        print('.', end='', flush=True)
         try:
             single = get_single_peak_data(code, params)
             if single:
                 result.append(single)
         except AttributeError:
-            print('AttributeError {}'.format(code))
+            print('AttributeError {}'.format(code), end='')
         except json.decoder.JSONDecodeError:
-            print('JSONDecodeError {}'.format(code))
+            print('JSONDecodeError {}'.format(code), end='')
+        except Exception as err:
+            print('Err{} @ {}'.format(err.args, code), end='')
     return result
 
 
@@ -95,12 +103,17 @@ def main(argv):
     params = {'lprice': 0, 'hprice': 10,
               'start': start, 'end': end,
               'lratio': ratio, 'hratio': float('inf'),
-              'lmktcap': 0, 'hmktcap': 10**15,
+              'lmktcap': 0, 'hmktcap': 10**10,
               'incr': True}
 
     stock_list = get_stock_list(params)
     print('\ntotal stock (%d<price<%d): %4d' % (params['lprice'], params['hprice'], len(stock_list)))
-    print(get_peak_data(stock_list, params))
+    result = get_peak_data(stock_list, params)
+
+    today = datetime.now().strftime(DATEFMT)
+    ofile = today+'ratio.txt'
+    with open(ofile, 'w') as f:
+        json.dump(result, f, indent=2)
 
 if __name__ == '__main__':
     main(sys.argv[1:])
