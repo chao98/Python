@@ -22,21 +22,9 @@ def _get_sheet(name):
 
     start_row, start_col = 0, 0     # $A$1
     end_row, end_col = 8, 2         # $B$7, note, the value should be +1 larger
-    # df = DataFrame(config_sheet.range('A1:B7').value, columns=['name', 'value'])
     df = DataFrame(config_sheet[start_row:end_row, start_col:end_col].value,
                    columns=['name', 'result'])
     df.set_index(keys=df.name, inplace=True)
-
-    # print(df)
-
-    # start_row, start_col = 15-1, 1-1
-    # end_row, end_col = 22-1, 2-1
-    # config_sheet[start_row:end_row, start_col:end_col].value = df
-    # config_sheet[start_row:end_row, start_col:end_col].value = df.values
-
-    # pos = 'A16'
-    # config_sheet.range(pos).value = df[df.name == name].result.values
-    # return df[df.name == name].result.values
     if name == 'Source':
         from_wb = xw.Book(*df[df.name == 'Input'].result.values)
         sheet = from_wb.sheets(*df[df.name == name].result.values)
@@ -47,10 +35,7 @@ def _get_sheet(name):
 
 def _get_sheet_size(sheet, row_offset=0, col_offset=0):
     start_row, start_col = 0 + row_offset, 0 + col_offset
-    # row_pace, col_pace = 512, 256
-    # end_row, end_col = start_row + row_pace, start_col + col_pace
     origin_position = chr(ord('A') + start_col) + str(start_row+1)
-    # print(origin_position)
 
     end_col = sheet.range(origin_position).end('right').column
     end_row = sheet.range(origin_position).end('down').row
@@ -61,7 +46,6 @@ def _create_df(sheet, start_row, start_col, end_row, end_col, reindex=False):
     df = DataFrame(sheet[start_row+1:end_row, start_col:end_col].value,
                    columns=sheet[start_row, start_col:end_col].value)
     if reindex:
-        # df.set_index(keys=df['CSR Number - Key'], inplace=True)
         df.set_index(keys=df.iloc[:, 0], inplace=True)
     return df
 
@@ -75,31 +59,22 @@ def _log(logsheet, msg, prefix=''):
         logsheet.range(row, col).value = date
         logsheet.range(row, col+1).value = time
         logsheet.range(row, col+2).value = msg
-    # print('{0} {1}, {2}, {3}'.format(prefix, date, time, msg), flush=True)
     return
 
 
 def import_csr_data():
     from_sheet = _get_sheet('Source')
-    # config_sheet = _get_sheet('Config')
-    # config_sheet.activate()
     area1 = area(*_get_sheet_size(from_sheet, 0, 1))
-    # df1 = _create_df(from_sheet, *_get_sheet_size(from_sheet, 0, 1), reindex=True)
     df1 = _create_df(from_sheet, *area1, reindex=True)
-    # print(df1.index.values)
 
     raw_sheet = _get_sheet('Raw')
     area2 = area(*_get_sheet_size(raw_sheet, 0, 0))
     df2 = _create_df(raw_sheet, *area2, reindex=True)
-    # print(df2.index.values)
-    # print(df2.iloc[-1, 0])
-    # print(df1.index.get_loc(df2.iloc[-1, 0]))
 
     log_sheet = _get_sheet('Log')
     try:
         start_index_df1 = df1.index.get_loc(df2.iloc[-1, 0]) + 1
         end_index_df1 = df1.shape[0] + 1
-        # print(start_index_df1, end_index_df1)
         if start_index_df1 + 1 < end_index_df1:
             start_row = area2.r2
             start_col = area2.c1
