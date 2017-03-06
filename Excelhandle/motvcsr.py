@@ -163,9 +163,22 @@ def csr_trend():
     _log(log_sheet, 'Successfully updated "Trend" in %s!' % YEAR, (time.time() - begin))
 
 
+def csr_statistic():
+    begin = time.time()
+    raw_sheet, YEAR = _get_sheet('Raw')
+    area1 = area(*_get_sheet_size(raw_sheet, 0, 0))
+    df1 = _create_df(raw_sheet, *area1)
+    df1.set_index(keys=df1['Date: Created'], inplace=True)
+    df1_this_year = df1[YEAR]
+
+    log_sheet, _ = _get_sheet('Log')
+    _log(log_sheet, 'Successfully updated "Trend" in %s!' % YEAR, (time.time() - begin))
+
+
 def main():
     # import_csr_data()
-    csr_trend()
+    # csr_trend()
+    csr_statistic()
 
 if __name__ == '__main__':
     main()
